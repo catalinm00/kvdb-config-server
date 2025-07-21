@@ -1,0 +1,41 @@
+package com.kvdbcs.repository;
+
+import com.kvdbcs.model.DbInstance;
+import jakarta.inject.Singleton;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Singleton
+public class DbInstanceRepository {
+    private final List<DbInstance> dbInstances;
+
+    public DbInstanceRepository() {
+        this.dbInstances = new ArrayList<>();
+    }
+
+    public Optional<DbInstance> findById(int id) {
+        return Optional.ofNullable(dbInstances.get(id));
+    }
+
+    public DbInstance save(DbInstance dbInstance) {
+        var instance = new DbInstance(dbInstances.size()+1, dbInstance.getHost(), dbInstance.getPort(), dbInstance.isDeleted());
+        dbInstances.add(instance);
+        return instance;
+    }
+
+    public void delete(DbInstance dbInstance) {
+        dbInstances.remove(dbInstance.getId());
+    }
+
+    public List<DbInstance> findAll() {
+        return new ArrayList<>(dbInstances);
+    }
+
+    public Optional<DbInstance> findByHost(String host) {
+        return dbInstances.stream()
+                .filter(dbInstance -> dbInstance.getHost().equals(host))
+                .findFirst();
+    }
+}
