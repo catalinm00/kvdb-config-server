@@ -1,6 +1,6 @@
-package com.kvdbcs.repository;
+package com.kvdbcs.domain.repository;
 
-import com.kvdbcs.model.DbInstance;
+import com.kvdbcs.domain.model.DbInstance;
 import jakarta.inject.Singleton;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class DbInstanceRepository {
     }
 
     public void delete(DbInstance dbInstance) {
-        dbInstances.remove(dbInstance.getId());
+        dbInstances.remove(dbInstance);
     }
 
     public List<DbInstance> findAll() {

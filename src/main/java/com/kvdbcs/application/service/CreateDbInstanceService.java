@@ -1,9 +1,9 @@
-package com.kvdbcs.service;
+package com.kvdbcs.application.service;
 
-import com.kvdbcs.model.DbInstance;
-import com.kvdbcs.model.InstancesRecoveryFile;
-import com.kvdbcs.repository.DbInstanceRepository;
-import com.kvdbcs.service.command.CreateDbInstanceCommand;
+import com.kvdbcs.domain.model.DbInstance;
+import com.kvdbcs.domain.model.InstancesRecoveryFile;
+import com.kvdbcs.domain.repository.DbInstanceRepository;
+import com.kvdbcs.application.service.command.CreateDbInstanceCommand;
 import jakarta.inject.Singleton;
 
 import java.io.IOException;
@@ -23,8 +23,9 @@ public class CreateDbInstanceService {
         if (command.port() < 0) {
             throw new IllegalArgumentException("valid port is required");
         }
+
         var instance = dbInstanceRepository.save(new DbInstance(command.host(), command.port()));
-        var recoveryFile = new InstancesRecoveryFile(InstancesRecoveryFile.DEFAULT_DIR, InstancesRecoveryFile.DEFAULT_NAME);
+        var recoveryFile = new InstancesRecoveryFile(InstancesRecoveryFile.DEFAULT_PATH  );
         recoveryFile.writeInstance(instance);
         return instance;
     }

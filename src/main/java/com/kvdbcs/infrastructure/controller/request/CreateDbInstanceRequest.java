@@ -1,4 +1,4 @@
-package com.kvdbcs.controller.request;
+package com.kvdbcs.infrastructure.controller.request;
 
 import io.micronaut.serde.annotation.Serdeable;
 

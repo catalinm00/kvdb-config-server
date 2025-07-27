@@ -1,7 +1,7 @@
-package com.kvdbcs.service;
+package com.kvdbcs.application.service;
 
-import com.kvdbcs.model.DbInstance;
-import com.kvdbcs.repository.DbInstanceRepository;
+import com.kvdbcs.domain.model.DbInstance;
+import com.kvdbcs.domain.repository.DbInstanceRepository;
 import jakarta.inject.Singleton;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.kvdbcs.model;
+package com.kvdbcs.domain.model;
 
 import io.micronaut.serde.annotation.Serdeable;
 
@@ -39,5 +39,9 @@ public class DbInstance {
 
     public void delete() {
         deleted = true;
+    }
+
+    public String toString() {
+        return "[id=%d, host=%s, port=%d, deleted=%s]".formatted(id, host, port, deleted);
     }
 }

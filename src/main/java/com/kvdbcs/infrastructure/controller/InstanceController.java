@@ -1,10 +1,10 @@
-package com.kvdbcs.controller;
+package com.kvdbcs.infrastructure.controller;
 
-import com.kvdbcs.controller.request.CreateDbInstanceRequest;
-import com.kvdbcs.model.DbInstance;
-import com.kvdbcs.service.CreateDbInstanceService;
-import com.kvdbcs.service.FindAllInstancesService;
-import com.kvdbcs.service.command.CreateDbInstanceCommand;
+import com.kvdbcs.infrastructure.controller.request.CreateDbInstanceRequest;
+import com.kvdbcs.domain.model.DbInstance;
+import com.kvdbcs.application.service.CreateDbInstanceService;
+import com.kvdbcs.application.service.FindAllInstancesService;
+import com.kvdbcs.application.service.command.CreateDbInstanceCommand;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
