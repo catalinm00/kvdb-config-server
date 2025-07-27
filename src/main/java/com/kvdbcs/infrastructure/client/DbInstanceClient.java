@@ -20,6 +20,7 @@ public class DbInstanceClient {
     private static final Logger logger = LoggerFactory.getLogger(DbInstanceClient.class);
     private final static int TIMEOUT_SECONDS = 5;
     private final String HEALTH_ENDPOINT = "/health";
+    private final String INSTANCE_ENDPOINT = "/instances";
     private HttpClient client;
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -55,7 +56,7 @@ public class DbInstanceClient {
             HttpRequest request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(serializedInstances))
                     .uri(URI.create(
-                            "%s://%s:%d%s".formatted("http", instanceToUpdate.getHost(), instanceToUpdate.getPort(), HEALTH_ENDPOINT)))
+                            "%s://%s:%d%s".formatted("http", instanceToUpdate.getHost(), instanceToUpdate.getPort(), INSTANCE_ENDPOINT)))
                     .build();
 
             var response = client.send(request, HttpResponse.BodyHandlers.discarding());
@@ -64,7 +65,7 @@ public class DbInstanceClient {
                 return;
             }
         } catch (IOException | InterruptedException e) {
-            logger.error(e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             return;
         }
         logger.info("Instance {}: UPDATED WITH MOST RECENT INSTANCES", instanceToUpdate.getHost());
