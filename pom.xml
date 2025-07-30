@@ -75,6 +75,11 @@
             <artifactId>micronaut-openapi-annotations</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -20,9 +20,13 @@ public class DbInstanceRepository {
     }
 
     public DbInstance save(DbInstance dbInstance) {
-        var instance = new DbInstance(dbInstances.size()+1, dbInstance.getHost(), dbInstance.getPort(), dbInstance.isDeleted());
+        var instance = new DbInstance(generateId(), dbInstance.getHost(), dbInstance.getPort(), dbInstance.isDeleted());
         dbInstances.add(instance);
         return instance;
+    }
+
+    private long generateId() {
+        return Math.max(dbInstances.size() + 1L, dbInstances.getLast().getId() + 1L);
     }
 
     public void delete(DbInstance dbInstance) {

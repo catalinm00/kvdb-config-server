@@ -20,7 +20,7 @@ public class DbInstanceClient {
     private static final Logger logger = LoggerFactory.getLogger(DbInstanceClient.class);
     private final static int TIMEOUT_SECONDS = 5;
     private final String HEALTH_ENDPOINT = "/health";
-    private final String INSTANCE_ENDPOINT = "/instances";
+    private final String INSTANCE_ENDPOINT = "/api/v1/instances";
     private HttpClient client;
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -39,14 +39,14 @@ public class DbInstanceClient {
         try {
             var response = client.send(request, HttpResponse.BodyHandlers.discarding());
             if (response.statusCode() != 200) {
-                logger.warn("Instance {}: ERROR {}", instance.getHost(), response.statusCode());
+                logger.warn("Instance {}: ERROR {}", instance.getId(), response.statusCode());
                 return false;
             }
         } catch (IOException | InterruptedException e) {
             logger.error(e.getMessage(), e);
             return false;
         }
-        logger.info("Instance {}: OK", instance.getHost());
+        logger.info("Instance {}: OK", instance.getId());
         return true;
     }
 
@@ -61,7 +61,7 @@ public class DbInstanceClient {
 
             var response = client.send(request, HttpResponse.BodyHandlers.discarding());
             if (response.statusCode() != 200) {
-                logger.warn("Error updating Instance {}: {}", instanceToUpdate.getHost(), response.statusCode());
+                logger.warn("Error updating Instance {}: {}", instanceToUpdate.getId(), response.statusCode());
                 return;
             }
         } catch (IOException | InterruptedException e) {
