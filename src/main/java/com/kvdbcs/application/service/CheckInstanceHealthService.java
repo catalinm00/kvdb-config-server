@@ -1,9 +1,11 @@
 package com.kvdbcs.application.service;
 
+import com.kvdbcs.domain.event.UpdatedInstanceEvent;
 import com.kvdbcs.infrastructure.client.DbInstanceClient;
 import com.kvdbcs.domain.model.DbInstance;
 import com.kvdbcs.domain.model.InstancesRecoveryFile;
 import com.kvdbcs.domain.repository.DbInstanceRepository;
+import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -16,10 +18,12 @@ public class CheckInstanceHealthService {
     private static final Logger logger = LoggerFactory.getLogger(CheckInstanceHealthService.class);
     private final DbInstanceRepository repository;
     private final DbInstanceClient dbInstanceClient;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public CheckInstanceHealthService(DbInstanceRepository repository, DbInstanceClient dbInstanceClient) {
+    public CheckInstanceHealthService(DbInstanceRepository repository, DbInstanceClient dbInstanceClient, ApplicationEventPublisher eventPublisher) {
         this.dbInstanceClient = dbInstanceClient;
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Scheduled(initialDelay = "15s", fixedDelay = "30s")
@@ -31,7 +35,8 @@ public class CheckInstanceHealthService {
             repository.delete(dbInstance);
             var file = new InstancesRecoveryFile(InstancesRecoveryFile.DEFAULT_PATH);
             file.deleteInstance(dbInstance);
-            logger.info("Instance {} DELETED", dbInstance.getHost());
+            logger.info("Instance {} DELETED", dbInstance.getId());
+            eventPublisher.publishEvent(new UpdatedInstanceEvent(dbInstance));
         }
         logger.info("Finished health check for all instances");
     }
