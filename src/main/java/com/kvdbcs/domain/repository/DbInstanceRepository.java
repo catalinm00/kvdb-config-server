@@ -26,7 +26,8 @@ public class DbInstanceRepository {
     }
 
     private long generateId() {
-        return Math.max(dbInstances.size() + 1L, dbInstances.getLast().getId() + 1L);
+        long a = dbInstances.isEmpty()? 1 : dbInstances.getLast().getId() + 1L;
+        return Math.max(dbInstances.size() + 1L, a);
     }
 
     public void delete(DbInstance dbInstance) {
