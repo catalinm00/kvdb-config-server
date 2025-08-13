@@ -1,5 +1,6 @@
 package com.kvdbcs.infrastructure.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kvdbcs.domain.model.DbInstance;
 import jakarta.inject.Singleton;
@@ -7,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -64,8 +66,11 @@ public class DbInstanceClient {
                 logger.warn("Error updating Instance {}: {}", instanceToUpdate.getId(), response.statusCode());
                 return;
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (JsonProcessingException | InterruptedException e) {
             logger.warn(e.getMessage(), e);
+            return;
+        } catch (IOException e) {
+            logger.warn("Could not connect to instance {}: {}", instanceToUpdate.getId(), e.getMessage());
             return;
         }
         logger.info("Instance {}: UPDATED WITH MOST RECENT INSTANCES", instanceToUpdate.getHost());
