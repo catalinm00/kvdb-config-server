@@ -32,17 +32,35 @@ public class CheckInstanceHealthService {
     @Scheduled(initialDelay = "15s", fixedDelay = "10s")
     public void execute() throws IOException {
         logger.info("Starting health check for all instances");
+
         for (DbInstance dbInstance : repository.findAll()) {
-            if (dbInstanceClient.isHealthy(dbInstance)) { continue; }
-            retries.put(dbInstance.getId(), retries.getOrDefault(dbInstance.getId(), 0) + 1);
-            if (retries.get(dbInstance.getId()) < 3) { continue; }
-            retries.replace(dbInstance.getId(), null);
+            long instanceId = dbInstance.getId();
+
+            if (dbInstanceClient.isHealthy(dbInstance)) {
+                retries.remove(instanceId); // Limpia el contador si está sano
+                continue;
+            }
+
+            int attempt = retries.getOrDefault(instanceId, 0) + 1;
+            retries.put(instanceId, attempt);
+
+            if (attempt < 3) {
+                logger.warn("Instance {} failed health check (attempt {})", instanceId, attempt);
+                continue;
+            }
+
+            // Eliminar instancia después de 3 intentos fallidos
+            retries.remove(instanceId);
             repository.delete(dbInstance);
-            var file = new InstancesRecoveryFile(InstancesRecoveryFile.DEFAULT_PATH);
+
+            InstancesRecoveryFile file = new InstancesRecoveryFile(InstancesRecoveryFile.DEFAULT_PATH);
             file.deleteInstance(dbInstance);
-            logger.info("Instance {} DELETED", dbInstance.getId());
+
+            logger.info("Instance {} DELETED after {} failed health checks", instanceId, attempt);
             eventPublisher.publishEvent(new UpdatedInstanceEvent(dbInstance));
         }
+
         logger.info("Finished health check for all instances");
     }
+
 }
