@@ -1,24 +1,21 @@
-# Etapa 1: build
+# Stage 1: Build
 FROM maven:3.9.8-eclipse-temurin-21 AS builder
 WORKDIR /app
 
-# Copiar pom.xml y resolver dependencias
+# Copy pom and resolve dependencies
 COPY pom.xml ./
 RUN mvn dependency:go-offline
 
-# Copiar el resto del código y compilar
+# Copy source and build
 COPY src ./src
-RUN mvn package -DskipTests
+RUN mvn clean package -DskipTests
 
-# Etapa 2: runtime
-FROM eclipse-temurin:17-jre-alpine
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Copiar el JAR construido
-COPY --from=builder /app/target/*.jar app.jar
+# Copy the fat JAR - Maven Shade creates {artifactId}-{version}.jar
+COPY --from=builder /app/target/config-server-0.1.jar app.jar
 
-# Puerto por defecto de Micronaut
 EXPOSE 8080
-
-# Ejecutar la aplicación
 CMD ["java", "-jar", "app.jar"]
